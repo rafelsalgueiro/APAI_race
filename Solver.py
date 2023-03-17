@@ -1,5 +1,7 @@
 #import os.subprocess
 import sys
+import random 
+import numpy
 
 def main():
     #os.subprocess("python3 rnd-conf-gen.py 50 100 > config.conf")
@@ -26,9 +28,21 @@ def main():
     tokens = line.split()
     n_variables = tokens[2]
     n_clauses   = tokens[3]
+    size_list_vars = int(n_variables) * 2
+    vars = []
+    for i in range(int(n_variables)):
+        i = i + 1
+        vars.append(i)
+    negative_vars = []
+    for i in range(int(n_variables)):
+        i = i + 1
+        negative_vars.append(-i)
+    for i in list(reversed(negative_vars)): 
+        vars.append(i)
     
     print(n_variables)
     print(n_clauses)
+    print(vars)
 
     #Read config
 
