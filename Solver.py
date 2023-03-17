@@ -1,7 +1,6 @@
 #import os.subprocess
 import sys
 import random 
-import numpy
 
 def main():
     #os.subprocess("python3 rnd-conf-gen.py 50 100 > config.conf")
