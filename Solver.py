@@ -63,4 +63,33 @@ def main():
 if __name__ == "__main__":
     main()
 
+                                            ### Walksat problem ###
+
+def walk_sat(formula, max_flips, p):
+    # Inicializar una asignación aleatoria
+    assignment = {var: random.choice([True, False]) for var in formula.variables}
+    
+    for i in range(max_flips):
+        # Verificar si la asignación actual satisface la fórmula
+        if formula.evaluate(assignment):
+            return assignment
+        
+        # Seleccionar una cláusula insatisfecha al azar
+        unsatisfied_clauses = [c for c in formula.clauses if not c.evaluate(assignment)]
+        clause = random.choice(unsatisfied_clauses)
+        
+        # Seleccionar una variable al azar de la cláusula
+        var = random.choice(clause.variables)
+        
+        # Seleccionar la asignación que maximiza el número de cláusulas satisfechas
+        if random.uniform(0, 1) < p:
+            # Elegir aleatoriamente una asignación para la variable seleccionada
+            assignment[var] = random.choice([True, False])
+        else:
+            # Elegir la asignación que maximiza el número de cláusulas satisfechas
+            flipped_assignment = {var: not assignment[var]}
+            if formula.num_satisfied_clauses(flipped_assignment) > formula.num_satisfied_clauses(assignment):
+                assignment = flipped_assignment
+    
+    return None
 
