@@ -1,6 +1,7 @@
 #import os.subprocess
 import sys
 import random 
+import numpy
 
 def main():
     #os.subprocess("python3 rnd-conf-gen.py 50 100 > config.conf")
@@ -15,19 +16,32 @@ def main():
 
     #Skip comments
     while(True):
-        line = file1.readlines() 
+        line = file1.readline()
         if line[0]!= 'c':
             break
     #Error handling
-    if (line[1][0]!='p'):
+    if (line[0]!='p'):
         sys.exit("ERROR: Not correctly formatted file (%s)." % sys.argv[1])
     
+
+
+
     #Get cfg parameters
-    tokens = line[1].split()
+    tokens = line.split()
     n_variables = tokens[2]
     n_clauses   = tokens[3]
     all_vars    = []
-    count       = 0
+    
+    if (line[0] == 'p'):
+        line = file1.readline()
+
+    clauses = []
+    while(True):
+        line = line.rstrip()[:-1]
+        clauses.append(line)
+        line = file1.readline()
+        if line == '':
+            break
     for i in range(int(n_variables)):
         i = i + 1
         all_vars.append(i)
@@ -37,17 +51,7 @@ def main():
         negative_vars.append(-i)
     for i in list(reversed(negative_vars)): 
         all_vars.append(i)
-    clauses = []
-    for i in range(len(line)-2):
-        clauses.append(line[i+2])
-        clauses[i] = clauses[i].strip(" 0\n")
-    for var in all_vars:
-        count = 0
-        print(var)
-        for match in clauses:
-            if str(var) in match:
-                count = count + 1
-        all_vars[var] = (var, count)
+
 
 
     print(n_variables)
