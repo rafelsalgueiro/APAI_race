@@ -23,9 +23,6 @@ def main():
     if (line[0]!='p'):
         sys.exit("ERROR: Not correctly formatted file (%s)." % sys.argv[1])
     
-
-
-
     #Get cfg parameters
     tokens = line.split()
     n_variables = tokens[2]
@@ -33,27 +30,36 @@ def main():
     all_vars    = []
     
     if (line[0] == 'p'):
-        line = file1.readline()
+        line = file1.readline()     #pasamos de la linea inicial 'p'
 
     clauses = []
-    while(True):
-        line = line.rstrip()[:-1]
-        clauses.append(line)
-        line = file1.readline()
-        if line == '':
-            break
-    for i in range(int(n_variables)):
-        i = i + 1
-        all_vars.append(i)
+
+   
     negative_vars = []
     for i in range(int(n_variables)):
         i = i + 1
+        all_vars.append(i)
         negative_vars.append(-i)
+
     for i in list(reversed(negative_vars)): 
         all_vars.append(i)
+    cont = [0 for i in range(len(all_vars)) ]
+    
+    while(True):
+        line = line.rstrip()[:-1]
+        clauses.append(line)            #guardamos las clausulas
+        for i in all_vars:              #para cada variable 
+            index = line.find(str(i))
+            print (i)
+            if index != -1 and index < len(line)-1 and line[index+1] == ' ':
+                cont[i] +=1             #contamos cuantas variables hay 
+        
+        line = file1.readline()
+        if line == '':
+            break
+            
 
-
-
+    print(cont)
     print(n_variables)
     print(n_clauses)
     print(all_vars)
