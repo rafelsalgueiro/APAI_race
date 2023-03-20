@@ -25,17 +25,20 @@ def main():
     args            = line.split()
     n_variables     = args[2]
     n_clauses       = args[3]
-    CNF_codified    = dict()
+    clauses         = dict()
 
+    #For each clause, save literals
+    #Initialice keys
     for i in range(int(n_clauses)):
-        CNF_codified[i] = []
+        clauses[i] = []
     
+    #Read file and add literals
     count = 0
     for line in cnf_file:
         line = line.rstrip()[:-1]
         literals = line.split()
         for i in literals:
-            CNF_codified[int(count)].append(i)
+            clauses[int(count)].append(i)
         count+=1 
 
     while (True):
@@ -46,22 +49,57 @@ def main():
         print("Decision made: ")
         print(decission)
         
+        #Check if is satisfactible
         count_sat_literals = []
-        for i in CNF_codified:
-            count_sat_literals.append(count_satisf(CNF_codified[i], decission))
-        
-        for i in count_sat_literals:
-            if count_sat_literals[i] == 0:
-                
-        print("Satisfactible clauses: ")
-        print(count_sat_literals)
+        for i in clauses:
+            count_sat_literals.append(count_satisf(clauses[i], decission))
         
         if check_sat(count_sat_literals):
-            print("Satisfactible")
+            print("c Randomizer")
+            print("s SATISFIABLE")
+            finallist = printVars(decission)
+            print("V " + str(finallist)[1:-1])
             break
-    
+
+        # #Flip variables
+        # for i in range(len(count_sat_literals)):
+        #     if count_sat_literals[i] == 0:
+        #         chosen = clauses[i]
+
+        # decission = findBestFlip(chosen, decission,clauses)
+
+        # print("Satisfactible clauses: ")
+        # print(count_sat_literals)
+        
     cnf_file.close()
 
+# def findBestFlip(clause, originalDecissions, clauses):
+#     numBrokenClauses = []
+#     testDecisions = {}
+#     count_sat_literals = []
+#     i=0
+#     for literal in clause:
+#         testDecisions[literal] = originalDecissions.copy()
+#         flipValue(literal,testDecisions)
+#         for i in clauses:
+#             count_sat_literals.append(count_satisf(clauses[i], testDecisions))
+#         numBrokenClauses[i] = insatClauseCounter(testDecisions[literal],count_sat_literals)
+#         i +=1
+#     finalTestDecision = testDecisions.index(numBrokenClauses.index(min(numBrokenClauses)))
+#     return finalTestDecision
+        
+# def flipValue(literal, testDecisions):
+#     if testDecisions[literal] == 0:
+#         testDecisions[literal] = 1
+#     else:
+#         testDecisions[literal] = 0
+
+# def insatClauseCounter(count_sat_literals):
+#     countZero = 0
+#     for i in count_sat_literals:
+#         if i == 0:
+#             countZero += 1
+#     return countZero
     
 def check_sat(count_sat_literals):
     clause_sat = 0
@@ -84,57 +122,18 @@ def count_satisf(clausula, decision):
             if decision[int(literal)] != 0:
                 count += 1
 
-    return count  
-   
+    return count
 
-   
-
-
-    #     print(decission)
-    #     for i in decission:
-            
-    #         if decission[i] == 1 and CNF_codified[i] != []:
-    #             satisfactible[1].append(CNF_codified[i])
-    #             if i in satisfactible[0]:
-    #                 satisfactible[0].remove(CNF_codified[i])
-    #         else:
-    #             if i not in satisfactible[1] and CNF_codified[i] != []:
-    #                 satisfactible[0].append(CNF_codified[i])
-    #         if decission[-i] == 1 and CNF_codified[-i] != []:
-    #             satisfactible[1].append(CNF_codified[-i])
-    #             if -i in satisfactible[0]:
-    #                 satisfactible[0].remove(CNF_codified[-i])
-    #         else:
-    #             if i not in satisfactible[1] and CNF_codified[-i] != []:
-    #                 satisfactible[0].append(CNF_codified[-i])
-
-    #     #print (satisfactible)
-    #     for j in range(int (n_variables)):
-    #         if len(satisfactible[0]) == 0:
-    #             print("Satisfactible")
-
-    # while(True):
-    #     line = line.rstrip()[:-1]
-    #     clauses.append(line)
-    #     for i in decission:
-    #         index = line.find(str(i))
-    #         if index != -1 and index < len(line)-1 and line[index-1] != '-':
-    #             cont[i-1] +=1
-    #         # elif i>=10 and index != -1 and index < len(line)-1 and line[index-1] == '-':
-    #         #     cont[-i] +=1
-    #         # elif index != -1 and index < len(line)-1 and line[index+1] == ' ' and line[index-1] != '-':
-    #         #     cont[i-1] +=1
-    #         # elif index != -1 and index < len(line)-1 and line[index+1] == ' ' and line[index-1] == '-':
-    #         #     cont[-i] +=1
-
-        # line = cnf_file.readline()
-        # if line == '':
-        #     break
-            
-
-
-
-    
+def printVars(decission):
+    l = []
+    j = 1
+    for i in decission:
+        if decission[i] == 0:
+            l.append(-j)
+        else:
+            l.append(j)
+        j+=1
+    return l
 
 
 if __name__ == "__main__":
