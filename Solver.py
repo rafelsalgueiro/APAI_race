@@ -50,9 +50,12 @@ def main():
         clauses.append(line)            #guardamos las clausulas
         for i in all_vars:              #para cada variable 
             index = line.find(str(i))
-            print (i)
             if index != -1 and index < len(line)-1 and line[index+1] == ' ' and line[index-1] != '-':       #NOMES FUNCIONA AMB FORMULES QUE TINGUIN VARIABLES DEL 1 AL 9
                 cont[i-1] +=1             #contamos cuantas variables hay 
+            if i>=10 and index != -1 and index < len(line)-1 and line[index-1] != '-':
+                cont[i-1] +=1             #contamos cuantas variables hay
+            if i>=10 and index != -1 and index < len(line)-1 and line[index-1] == '-':
+                cont[-i] +=1             #contamos cuantas variables hay
             if index != -1 and index < len(line)-1 and line[index+1] == ' ' and line[index-1] == '-':
                 cont[-i] +=1
 
