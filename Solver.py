@@ -44,8 +44,37 @@ def main():
             CNF_codified[int(i)].append(count)
         count+=1
 
-    print(CNF_codified)
-    
+    satisfactible = {0: [], 1: []}
+    all_vars = {}
+    for i in range(1,int(n_variables)+1):
+        all_vars[i] = 0
+        all_vars[-i] = 0
+
+    for tries in range(int(n_variables)):
+        for i in range(1,int(n_variables)+1):
+            all_vars[i] =random.randint(0,1)
+            all_vars[-i] = random.randint(0,1)
+
+        for i in all_vars:
+            print(all_vars)
+            if all_vars[i] == 1 and CNF_codified[i] != []:
+                satisfactible[1].append(CNF_codified[i])
+                if i in satisfactible[0]:
+                    satisfactible[0].remove(CNF_codified[i])
+            else:
+                if i not in satisfactible[1] and CNF_codified[i] != []:
+                    satisfactible[0].append(CNF_codified[i])
+            if all_vars[-i] == 1 and CNF_codified[-i] != []:
+                satisfactible[1].append(CNF_codified[-i])
+                if -i in satisfactible[0]:
+                    satisfactible[0].remove(CNF_codified[-i])
+            else:
+                if i not in satisfactible[1] and CNF_codified[-i] != []:
+                    satisfactible[0].append(CNF_codified[-i])
+        print (satisfactible)
+        for j in range(int (n_variables)):
+            if len(satisfactible[0]) == 0:
+                print("Satisfactible")
 
     # while(True):
     #     line = line.rstrip()[:-1]
