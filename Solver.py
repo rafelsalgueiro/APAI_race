@@ -1,110 +1,80 @@
-#import os.subprocess
 import sys
 import random 
 import numpy
 
 def main():
-    #os.subprocess("python3 rnd-conf-gen.py 50 100 > config.conf")
-    #os.subprocess("./minicom config.conf &> stdout.txt")
     if len(sys.argv) != 2:
         sys.exit("Use: %s <input_cnf_formula>" % sys.argv[0])
 
     try:
-        file1 = open(sys.argv[1], "r")
+        cnf_file = open(sys.argv[1], "r")
     except:
         sys.exit("ERROR: Could not open (%s)." % sys.argv[1])
 
     #Skip comments
     while(True):
-        line = file1.readline()
+        line = cnf_file.readline()
         if line[0]!= 'c':
             break
+
     #Error handling
     if (line[0]!='p'):
         sys.exit("ERROR: Not correctly formatted file (%s)." % sys.argv[1])
     
     #Get cfg parameters
-    tokens = line.split()
-    n_variables = tokens[2]
-    n_clauses   = tokens[3]
-    all_vars    = []
-    
-    if (line[0] == 'p'):
-        line = file1.readline()     #pasamos de la linea inicial 'p'
+    args            = line.split()
+    n_variables     = args[2]
+    n_clauses       = args[3]
+    CNF_codified    = dict()
 
-    clauses = []
 
-   
-    negative_vars = []
     for i in range(int(n_variables)):
-        i = i + 1
-        all_vars.append(i)
-        negative_vars.append(-i)
+        i += 1
+        CNF_codified[i] = []
 
-    for i in list(reversed(negative_vars)): 
-        all_vars.append(i)
-    cont = [0 for i in range(len(all_vars)) ]
+    for j in range(int(n_variables)):
+        j += 1
+        CNF_codified[-j] = []
     
-    while(True):
+    count = 0
+    for line in cnf_file:
         line = line.rstrip()[:-1]
-        clauses.append(line)
-        for i in all_vars:
-            index = line.find(str(i))
-            if i>=10 and index != -1 and index < len(line)-1 and line[index-1] != '-':
-                cont[i-1] +=1
-            elif i>=10 and index != -1 and index < len(line)-1 and line[index-1] == '-':
-                cont[-i] +=1
-            elif index != -1 and index < len(line)-1 and line[index+1] == ' ' and line[index-1] != '-':
-                cont[i-1] +=1
-            elif index != -1 and index < len(line)-1 and line[index+1] == ' ' and line[index-1] == '-':
-                cont[-i] +=1
+        literals = line.split()
+        for i in literals:
+            CNF_codified[int(i)].append(count)
+        count+=1
 
-        line = file1.readline()
-        if line == '':
-            break
+    print(CNF_codified)
+    
+
+    # while(True):
+    #     line = line.rstrip()[:-1]
+    #     clauses.append(line)
+    #     for i in all_vars:
+    #         index = line.find(str(i))
+    #         if index != -1 and index < len(line)-1 and line[index-1] != '-':
+    #             cont[i-1] +=1
+    #         # elif i>=10 and index != -1 and index < len(line)-1 and line[index-1] == '-':
+    #         #     cont[-i] +=1
+    #         # elif index != -1 and index < len(line)-1 and line[index+1] == ' ' and line[index-1] != '-':
+    #         #     cont[i-1] +=1
+    #         # elif index != -1 and index < len(line)-1 and line[index+1] == ' ' and line[index-1] == '-':
+    #         #     cont[-i] +=1
+
+        # line = cnf_file.readline()
+        # if line == '':
+        #     break
             
 
-    print(cont)
+    #print(cont)
     print(n_variables)
     print(n_clauses)
-    print(all_vars)
-    print(clauses)
+    #print(clauses)
 
     #Read config
 
-    file1.close()
+    cnf_file.close()
 
 
 if __name__ == "__main__":
     main()
-
-                                            ### Walksat problem ###
-
-def walk_sat(formula, max_flips, p):
-    # Inicializar una asignación aleatoria
-    assignment = {var: random.choice([True, False]) for var in formula.variables}
-    
-    for i in range(max_flips):
-        # Verificar si la asignación actual satisface la fórmula
-        if formula.evaluate(assignment):
-            return assignment
-        
-        # Seleccionar una cláusula insatisfecha al azar
-        unsatisfied_clauses = [c for c in formula.clauses if not c.evaluate(assignment)]
-        clause = random.choice(unsatisfied_clauses)
-        
-        # Seleccionar una variable al azar de la cláusula
-        var = random.choice(clause.variables)
-        
-        # Seleccionar la asignación que maximiza el número de cláusulas satisfechas
-        if random.uniform(0, 1) < p:
-            # Elegir aleatoriamente una asignación para la variable seleccionada
-            assignment[var] = random.choice([True, False])
-        else:
-            # Elegir la asignación que maximiza el número de cláusulas satisfechas
-            flipped_assignment = {var: not assignment[var]}
-            if formula.num_satisfied_clauses(flipped_assignment) > formula.num_satisfied_clauses(assignment):
-                assignment = flipped_assignment
-    
-    return None
-
