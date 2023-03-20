@@ -27,59 +27,96 @@ def main():
     n_clauses       = args[3]
     CNF_codified    = dict()
 
-
-    for i in range(int(n_variables)):
-        i += 1
+    for i in range(int(n_clauses)):
         CNF_codified[i] = []
-
-    for j in range(int(n_variables)):
-        j += 1
-        CNF_codified[-j] = []
     
     count = 0
     for line in cnf_file:
         line = line.rstrip()[:-1]
         literals = line.split()
         for i in literals:
-            CNF_codified[int(i)].append(count)
-        count+=1
+            CNF_codified[int(count)].append(i)
+        count+=1 
 
-    satisfactible = {0: [], 1: []}
-    all_vars = {}
-    for i in range(1,int(n_variables)+1):
-        all_vars[i] = 0
-        all_vars[-i] = 0
+    while (True):
+        #Make decission
+        decission = {}
+        for i in range(1, int(n_variables)+1):
+            decission[i] = random.randint(0,1)
+        print("Decision made: ")
+        print(decission)
+        
+        count_sat_literals = []
+        for i in CNF_codified:
+            count_sat_literals.append(count_satisf(CNF_codified[i], decission))
+        
+        for i in count_sat_literals:
+            if count_sat_literals[i] == 0:
+                
+        print("Satisfactible clauses: ")
+        print(count_sat_literals)
+        
+        if check_sat(count_sat_literals):
+            print("Satisfactible")
+            break
+    
+    cnf_file.close()
 
-    for tries in range(int(n_variables)):
-        for i in range(1,int(n_variables)+1):
-            all_vars[i] =random.randint(0,1)
-            all_vars[-i] = random.randint(0,1)
+    
+def check_sat(count_sat_literals):
+    clause_sat = 0
+    for i in count_sat_literals:
+        if i > 0:
+            clause_sat +=1
+    if clause_sat == len(count_sat_literals):
+        return True
+    
+    return False
+    
 
-        for i in all_vars:
-            print(all_vars)
-            if all_vars[i] == 1 and CNF_codified[i] != []:
-                satisfactible[1].append(CNF_codified[i])
-                if i in satisfactible[0]:
-                    satisfactible[0].remove(CNF_codified[i])
-            else:
-                if i not in satisfactible[1] and CNF_codified[i] != []:
-                    satisfactible[0].append(CNF_codified[i])
-            if all_vars[-i] == 1 and CNF_codified[-i] != []:
-                satisfactible[1].append(CNF_codified[-i])
-                if -i in satisfactible[0]:
-                    satisfactible[0].remove(CNF_codified[-i])
-            else:
-                if i not in satisfactible[1] and CNF_codified[-i] != []:
-                    satisfactible[0].append(CNF_codified[-i])
-        print (satisfactible)
-        for j in range(int (n_variables)):
-            if len(satisfactible[0]) == 0:
-                print("Satisfactible")
+def count_satisf(clausula, decision):
+    count = 0
+    for literal in clausula:
+        if literal[0] == '-':
+            if decision[int(literal.lstrip('-'))] == 0:
+                count += 1
+        else:
+            if decision[int(literal)] != 0:
+                count += 1
+
+    return count  
+   
+
+   
+
+
+    #     print(decission)
+    #     for i in decission:
+            
+    #         if decission[i] == 1 and CNF_codified[i] != []:
+    #             satisfactible[1].append(CNF_codified[i])
+    #             if i in satisfactible[0]:
+    #                 satisfactible[0].remove(CNF_codified[i])
+    #         else:
+    #             if i not in satisfactible[1] and CNF_codified[i] != []:
+    #                 satisfactible[0].append(CNF_codified[i])
+    #         if decission[-i] == 1 and CNF_codified[-i] != []:
+    #             satisfactible[1].append(CNF_codified[-i])
+    #             if -i in satisfactible[0]:
+    #                 satisfactible[0].remove(CNF_codified[-i])
+    #         else:
+    #             if i not in satisfactible[1] and CNF_codified[-i] != []:
+    #                 satisfactible[0].append(CNF_codified[-i])
+
+    #     #print (satisfactible)
+    #     for j in range(int (n_variables)):
+    #         if len(satisfactible[0]) == 0:
+    #             print("Satisfactible")
 
     # while(True):
     #     line = line.rstrip()[:-1]
     #     clauses.append(line)
-    #     for i in all_vars:
+    #     for i in decission:
     #         index = line.find(str(i))
     #         if index != -1 and index < len(line)-1 and line[index-1] != '-':
     #             cont[i-1] +=1
@@ -95,14 +132,9 @@ def main():
         #     break
             
 
-    #print(cont)
-    print(n_variables)
-    print(n_clauses)
-    #print(clauses)
 
-    #Read config
 
-    cnf_file.close()
+    
 
 
 if __name__ == "__main__":
