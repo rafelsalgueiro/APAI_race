@@ -1,6 +1,5 @@
 import sys
 import random 
-import numpy
 
 def main():
     if len(sys.argv) != 2:
@@ -59,15 +58,16 @@ def main():
             print("V " + str(finallist)[1:-1])
             break
 
-        #Flip variables
-        for i in range(len(count_sat_literals)):
-            if count_sat_literals[i] == 0:
-                chosen = clauses[i]
+        # #Flip variables
+        # for i in range(len(count_sat_literals)):
+        #     if count_sat_literals[i] == 0:
+        #         chosen = clauses[i]
 
-        decission = findBestFlip(chosen, decission,clauses)
+        # decission = findBestFlip(chosen, decission,clauses)
 
-        print("Satisfactible clauses: ")
-        print(count_sat_literals)
+        
+        # print("Satisfactible clauses: ")
+        # print(count_sat_literals)
         
     cnf_file.close()
 
@@ -82,7 +82,7 @@ def findBestFlip(clause, originalDecissions, clauses):
         for c in clauses:
             count_sat_literals.append(count_satisf(clauses[c], testDecisions))
         numBrokenClauses.append(insatClauseCounter(count_sat_literals))
-    print (numpy.min(numBrokenClauses))
+    #print (numpy.min(numBrokenClauses))
     
     finalTestDecision = testDecisions[min(numBrokenClauses)]
     return finalTestDecision
