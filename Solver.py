@@ -46,8 +46,6 @@ def main():
         decission = {}
         for i in range(1, int(n_variables)+1):
             decission[i] = random.randint(0,1)
-        print("Decision made: ")
-        print(decission)
         
         #Check if is satisfactible
         count_sat_literals = []
@@ -61,45 +59,46 @@ def main():
             print("V " + str(finallist)[1:-1])
             break
 
-        # #Flip variables
-        # for i in range(len(count_sat_literals)):
-        #     if count_sat_literals[i] == 0:
-        #         chosen = clauses[i]
+        #Flip variables
+        for i in range(len(count_sat_literals)):
+            if count_sat_literals[i] == 0:
+                chosen = clauses[i]
 
-        # decission = findBestFlip(chosen, decission,clauses)
+        decission = findBestFlip(chosen, decission,clauses)
 
-        # print("Satisfactible clauses: ")
-        # print(count_sat_literals)
+        print("Satisfactible clauses: ")
+        print(count_sat_literals)
         
     cnf_file.close()
 
-# def findBestFlip(clause, originalDecissions, clauses):
-#     numBrokenClauses = []
-#     testDecisions = {}
-#     count_sat_literals = []
-#     i=0
-#     for literal in clause:
-#         testDecisions[literal] = originalDecissions.copy()
-#         flipValue(literal,testDecisions)
-#         for i in clauses:
-#             count_sat_literals.append(count_satisf(clauses[i], testDecisions))
-#         numBrokenClauses[i] = insatClauseCounter(testDecisions[literal],count_sat_literals)
-#         i +=1
-#     finalTestDecision = testDecisions.index(numBrokenClauses.index(min(numBrokenClauses)))
-#     return finalTestDecision
+def findBestFlip(clause, originalDecissions, clauses):
+    numBrokenClauses = []
+    testDecisions = {}
+    count_sat_literals = []
+    for literal in clause:
+        testDecisions = originalDecissions.copy()
         
-# def flipValue(literal, testDecisions):
-#     if testDecisions[literal] == 0:
-#         testDecisions[literal] = 1
-#     else:
-#         testDecisions[literal] = 0
+        flipValue(literal,testDecisions)
+        for c in clauses:
+            count_sat_literals.append(count_satisf(clauses[c], testDecisions))
+        numBrokenClauses.append(insatClauseCounter(count_sat_literals))
+    print (numpy.min(numBrokenClauses))
+    
+    finalTestDecision = testDecisions[min(numBrokenClauses)]
+    return finalTestDecision
+        
+def flipValue(literal, testDecisions):
+    if literal in testDecisions and testDecisions[literal] == 0:
+        testDecisions[literal] = 1
+    if literal in testDecisions and testDecisions[literal] == 1:
+        testDecisions[literal] = 0
 
-# def insatClauseCounter(count_sat_literals):
-#     countZero = 0
-#     for i in count_sat_literals:
-#         if i == 0:
-#             countZero += 1
-#     return countZero
+def insatClauseCounter(count_sat_literals):
+    countZero = 0
+    for i in count_sat_literals:
+        if i == 0:
+            countZero += 1
+    return countZero
     
 def check_sat(count_sat_literals):
     clause_sat = 0
